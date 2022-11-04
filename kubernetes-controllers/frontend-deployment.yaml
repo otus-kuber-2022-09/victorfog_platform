@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: server
-        image: pve.flerken.space:5000/frontend:v0.0.2
+        image: pve.flerken.space:5000/frontend:v0.0.1
         env:
           - name: PORT
             value: "8080"
@@ -44,7 +44,7 @@ spec:
         readinessProbe:
             initialDelaySeconds: 10
             httpGet:
-              path: "/_health"
+              path: "/_healthz"
               port: 8080
               httpHeaders:
               - name: "Cookie"
