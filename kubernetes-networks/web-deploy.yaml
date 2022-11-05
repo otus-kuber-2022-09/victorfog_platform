@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: web
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 100%
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+        - name: web
+          image: pve.flerken.space:5000/web
+          volumeMounts:
+            - name: app
+              mountPath: /app
+          livenessProbe:
+            tcpSocket: 
+              port: 8000
+          readinessProbe:
+            httpGet:
+              path: /index.html
+              port: 8000
+      initContainers:
+        - name: init-index-page
+          image: busybox:1.31.0
+          command: [ 'sh', '-c', 'wget -O- https://tinyurl.com/otus-k8s-intro | sh']
+          volumeMounts:
+            - name: app
+              mountPath: /app
+      volumes:
+        - name: app
+          emptyDir: {}
